@@ -135,6 +135,8 @@ export class TimeTree {
   private dead = false;
   private path = new Set<LangNode>();
   private cmpPath = new Set<LangNode>();
+  /** Open descendants of the selected node, whose branches light up with it. */
+  private sub = new Set<LangNode>();
   private mrca: LangNode | null = null;
   private rel = new Map<LangNode, number>();
 
@@ -672,6 +674,7 @@ export class TimeTree {
     this.mrca = sel && cmp ? mrcaOf(sel, cmp) : null;
     this.path = new Set(sel ? (sel.ancestors() as LangNode[]) : []);
     this.cmpPath = new Set<LangNode>();
+    this.sub = new Set(sel && !cmp ? (sel.descendants().slice(1) as LangNode[]) : []);
     if (sel && cmp && this.mrca) {
       for (const n of [sel, cmp])
         for (let x: LangNode | null = n; x; x = x.parent as LangNode | null) {
@@ -702,7 +705,8 @@ export class TimeTree {
     c.toggle('cmp-path', this.cmpPath.has(d));
     c.toggle('compare', d === this.compare);
     c.toggle('mrca', d === this.mrca);
-    c.toggle('dim', !!sel && !this.path.has(d) && !this.cmpPath.has(d) && (this.compare !== null || !this.rel.size));
+    c.toggle('in-sub', this.sub.has(d));
+    c.toggle('dim', !!sel && !this.path.has(d) && !this.cmpPath.has(d) && !this.sub.has(d) && (this.compare !== null || !this.rel.size));
     const share = this.rel.get(d);
     const showRel = share !== undefined && !d.children && share >= 0.05 && !this.path.has(d);
     el.querySelector('.rl')!.textContent = showRel ? formatShare(share) : '';
@@ -949,6 +953,7 @@ export class TimeTree {
     let s = 0.8;
     if (this.selected) {
       if (this.cmpPath.has(d) || this.path.has(d)) s = 1;
+      else if (this.sub.has(d)) s = 0.95;
       else if (this.compare) s = 0.12;
       else if (this.rel.size) s = 0.12 + 0.8 * Math.sqrt(this.rel.get(d) ?? 0);
       else s = 0.3;
@@ -1017,7 +1022,8 @@ export class TimeTree {
     const T = new THREE.Vector3();
     for (const d of this.drawn) {
       if (!d._children || d.g <= 0.01) continue;
-      const s = this.linkStrength(d) * 0.42;
+      const lit = this.selected && (this.path.has(d) || this.sub.has(d));
+      const s = this.linkStrength(d) * (lit ? 0.7 : 0.42);
       c0.set(d.color).lerp(BG, 1 - s);
       c1.set(d.color).lerp(BG, 1 - s * 0.6);
       this.pos(d, P);
@@ -1095,6 +1101,7 @@ export class TimeTree {
       else if (d === this.compare) pr += 9e6;
       else if (d === this.mrca) pr += 8e6;
       else if (this.path.has(d) || this.cmpPath.has(d)) pr += 7e6;
+      else if (this.sub.has(d)) pr += 3e6;
       if (d.depth === 0) pr += 6e6;
       if (d.depth === 1) pr += 5e5;
       if (d.children || d._children) pr += 2e5 + d.leafCount * 50;

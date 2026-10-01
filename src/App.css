@@ -1430,6 +1430,7 @@
 }
 
 .cn.on-path .cn-label,
+.cn.in-sub .cn-label,
 .cn.cmp-path .cn-label {
   color: #fff3df;
 }
