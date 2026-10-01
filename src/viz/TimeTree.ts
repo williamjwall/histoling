@@ -284,7 +284,7 @@ export class TimeTree {
     if (!target) return;
     this.setAttract(false);
     const opened = this.reveal(target);
-    if (target._children) this.expand(target);
+    if (target._children) this.open(target);
     this.setSelected(target);
     this.update(opened ?? target);
     this.frame(target);
@@ -295,25 +295,11 @@ export class TimeTree {
     const d = this.find(uid);
     if (!d || d.depth === 0) return;
     if (d.children) this.collapse(d);
-    else if (d._children) this.expand(d);
+    else if (d._children) this.open(d);
     else return;
     this.update(d);
     this.frame(d);
     this.opts.onSelect(this.selected);
-  }
-
-  expandAll(uid: string) {
-    const d = this.find(uid);
-    if (!d) return;
-    const open = (n: LangNode) => {
-      if (n._children) this.expand(n);
-      n.children?.forEach((c) => open(c as LangNode));
-    };
-    open(d);
-    this.setSelected(d);
-    this.update(d);
-    this.frame(d);
-    this.opts.onSelect(d);
   }
 
   /** Compare the selected node against another, revealing both lineages. */
@@ -604,6 +590,16 @@ export class TimeTree {
     }
   }
 
+  /** Open a family all the way down to its languages; the Origin opens one level at a time. */
+  private open(d: LangNode) {
+    if (d.depth === 0) return this.expand(d);
+    const walk = (n: LangNode) => {
+      this.expand(n);
+      n.children?.forEach((c) => walk(c as LangNode));
+    };
+    walk(d);
+  }
+
   private expand(d: LangNode) {
     if (!d._children) return;
     d.children = d._children;
@@ -766,10 +762,10 @@ export class TimeTree {
     }
     if (this.selected !== d) {
       this.setSelected(d);
-      this.expand(d);
+      this.open(d);
     } else if (d.depth > 0) {
       if (d.children) this.collapse(d);
-      else this.expand(d);
+      else this.open(d);
     }
     this.update(d);
     this.frame(d);
@@ -839,7 +835,7 @@ export class TimeTree {
   private frame(d: LangNode) {
     if (d.depth === 0) return this.fit();
     const ctx: LangNode[] = [d];
-    if (d.children) ctx.push(...(d.children as LangNode[]));
+    if (d.children) ctx.push(...(d.descendants().slice(1) as LangNode[]));
     else if (d.parent) ctx.push(d.parent as LangNode, ...((d.parent.children ?? []) as LangNode[]));
     const pts = ctx.map((n) => this.home(n));
     for (const n of ctx) if (n._children) pts.push(this.home(n, n.minAge));

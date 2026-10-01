@@ -216,7 +216,6 @@ export function InfoPanel({ node, chart, onCompare, onClose }: Props) {
               {node.depth > 0 && (
                 <button onClick={() => chart.toggle(node.uid)}>{node.children ? 'Collapse' : 'Open'}</button>
               )}
-              {node.depth > 0 && <button onClick={() => chart.expandAll(node.uid)}>Open all</button>}
             </div>
           </div>
           <ul>
