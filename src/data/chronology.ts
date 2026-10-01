@@ -1,0 +1,213 @@
+/**
+ * Time depth, in years before present, keyed by node name.
+ *  - split: when the proto-language broke up into its daughter branches.
+ *  - end:   when an extinct language stopped being spoken natively.
+ * Values are rounded scholarly estimates; deep families are heavily debated.
+ * Nodes without a value are interpolated between their parent and descendants.
+ */
+export interface Chrono {
+  split?: number;
+  end?: number;
+}
+
+/** Root of the chart: beyond reconstructable time. */
+export const ROOT_AGE = 20000;
+
+/** Groupings that are not genealogical clades: their members only meet at the root. */
+export const NON_CLADES = new Set(['Language isolates', 'Creoles & Pidgins']);
+
+export const chronology: Record<string, Chrono> = {
+  // Afroasiatic
+  Afroasiatic: { split: 12000 },
+  Semitic: { split: 5750 },
+  'East Semitic': { split: 4700 },
+  Akkadian: { end: 1950 },
+  Eblaite: { end: 4300 },
+  'Central Semitic': { split: 4500 },
+  'Northwest Semitic': { split: 3800 },
+  Phoenician: { end: 1800 },
+  Ugaritic: { end: 3200 },
+  'South Semitic': { split: 3500 },
+  "Ge'ez": { end: 1000 },
+  Egyptian: { split: 5200 },
+  Coptic: { end: 400 },
+  Berber: { split: 2500 },
+  Cushitic: { split: 7000 },
+  Chadic: { split: 7000 },
+  Omotic: { split: 7000 },
+
+  // Indo-European
+  'Indo-European': { split: 6000 },
+  Anatolian: { split: 4500 },
+  Hittite: { end: 3200 },
+  Luwian: { end: 2600 },
+  Lydian: { end: 2300 },
+  Lycian: { end: 2300 },
+  Tocharian: { split: 2500 },
+  'Tocharian A': { end: 1200 },
+  'Tocharian B': { end: 1200 },
+  Germanic: { split: 2500 },
+  'North Germanic': { split: 1500 },
+  'Old Norse': { end: 700 },
+  'West Germanic': { split: 1800 },
+  'Anglo-Frisian': { split: 1600 },
+  'Old English': { end: 870 },
+  'Low Franconian': { split: 1200 },
+  'High German': { split: 1300 },
+  'East Germanic': { split: 1900 },
+  Gothic: { end: 1200 },
+  Vandalic: { end: 1450 },
+  Italic: { split: 3000 },
+  'Latino-Faliscan': { split: 2800 },
+  Faliscan: { end: 2150 },
+  Latin: { split: 1700 },
+  Romance: { split: 1400 },
+  'Ibero-Romance': { split: 1100 },
+  'Occitano-Romance': { split: 1100 },
+  'Gallo-Romance': { split: 1200 },
+  'Italo-Dalmatian': { split: 1200 },
+  Dalmatian: { end: 128 },
+  'Rhaeto-Romance': { split: 1000 },
+  'Eastern Romance': { split: 1100 },
+  'Osco-Umbrian': { split: 2700 },
+  Oscan: { end: 1900 },
+  Umbrian: { end: 1900 },
+  Celtic: { split: 3000 },
+  Goidelic: { split: 1500 },
+  Brittonic: { split: 1500 },
+  'Continental Celtic': { split: 2600 },
+  Gaulish: { end: 1500 },
+  Celtiberian: { end: 2050 },
+  Lepontic: { end: 2050 },
+  'Balto-Slavic': { split: 3500 },
+  Slavic: { split: 1500 },
+  'Old Church Slavonic': { end: 950 },
+  'East Slavic': { split: 900 },
+  'West Slavic': { split: 1100 },
+  'South Slavic': { split: 1200 },
+  Baltic: { split: 2500 },
+  'Old Prussian': { end: 325 },
+  'Indo-Iranian': { split: 4200 },
+  'Indo-Aryan': { split: 3600 },
+  Pali: { end: 1500 },
+  Hindustani: { split: 400 },
+  Iranian: { split: 3500 },
+  Avestan: { end: 2500 },
+  'Old Persian': { end: 2300 },
+  Sogdian: { end: 1000 },
+  Hellenic: { split: 3600 },
+  'Mycenaean Greek': { end: 3100 },
+  'Ancient Greek': { split: 2400 },
+  'Koine Greek': { split: 1400 },
+
+  // Northern Eurasia
+  Uralic: { split: 6000 },
+  Finnic: { split: 2000 },
+  Mordvinic: { split: 1500 },
+  Permic: { split: 1500 },
+  Ugric: { split: 3500 },
+  Samoyedic: { split: 2500 },
+  Kartvelian: { split: 4000 },
+  'Northwest Caucasian': { split: 4000 },
+  Ubykh: { end: 34 },
+  'Northeast Caucasian': { split: 6000 },
+  Turkic: { split: 2500 },
+  'Old Turkic': { end: 800 },
+  Oghuz: { split: 1100 },
+  Kipchak: { split: 1100 },
+  Karluk: { split: 1000 },
+  'Siberian Turkic': { split: 1500 },
+  Oghur: { split: 2000 },
+  Bulgar: { end: 600 },
+  Mongolic: { split: 800 },
+  'Middle Mongol': { end: 400 },
+  Tungusic: { split: 2000 },
+  Jurchen: { end: 400 },
+  Koreanic: { split: 1500 },
+  Japonic: { split: 3000 },
+  'Old Japanese': { end: 1200 },
+
+  // East & Southeast Asia
+  'Sino-Tibetan': { split: 7200 },
+  Sinitic: { split: 3300 },
+  'Old Chinese': { split: 2000 },
+  'Middle Chinese': { split: 1100 },
+  'Tibeto-Burman': { split: 6000 },
+  'Lolo-Burmese': { split: 2500 },
+  Tibetic: { split: 1400 },
+  Tangut: { end: 500 },
+  'Hmong–Mien': { split: 2500 },
+  'Kra–Dai': { split: 4000 },
+  Tai: { split: 2000 },
+  Austroasiatic: { split: 4500 },
+  Vietic: { split: 2500 },
+  Munda: { split: 3500 },
+  Dravidian: { split: 4500 },
+  'South Dravidian': { split: 3000 },
+  'South-Central Dravidian': { split: 3000 },
+  'North Dravidian': { split: 3000 },
+  Austronesian: { split: 5500 },
+  Formosan: { split: 5000 },
+  'Malayo-Polynesian': { split: 4500 },
+  Philippine: { split: 3500 },
+  Malayic: { split: 2000 },
+  Oceanic: { split: 3500 },
+  Polynesian: { split: 2400 },
+
+  // Sahul
+  'Trans–New Guinea': { split: 7000 },
+  'Pama–Nyungan': { split: 5000 },
+
+  // Americas
+  'Eskimo–Aleut': { split: 4500 },
+  Inuit: { split: 800 },
+  'Na-Dene': { split: 5000 },
+  Athabaskan: { split: 2500 },
+  Eyak: { end: 18 },
+  Algic: { split: 5000 },
+  Algonquian: { split: 3000 },
+  Iroquoian: { split: 4000 },
+  Wyandot: { end: 70 },
+  Siouan: { split: 3000 },
+  'Uto-Aztecan': { split: 5000 },
+  Nahuan: { split: 1500 },
+  'Classical Nahuatl': { end: 300 },
+  Mayan: { split: 4200 },
+  'Classic Maya': { end: 1100 },
+  Arawakan: { split: 4500 },
+  Taíno: { end: 450 },
+  Tupian: { split: 5000 },
+  'Tupi–Guarani': { split: 2500 },
+  'Old Tupi': { end: 250 },
+  Quechuan: { split: 1800 },
+  Aymaran: { split: 1500 },
+
+  // Africa
+  'Khoe–Kwadi': { split: 2000 },
+  Tuu: { split: 3000 },
+  'Niger–Congo': { split: 12000 },
+  Mande: { split: 7000 },
+  'Atlantic–Congo': { split: 10000 },
+  Atlantic: { split: 9000 },
+  Gur: { split: 5000 },
+  Kwa: { split: 6000 },
+  'Volta–Niger': { split: 7000 },
+  'Benue–Congo': { split: 7000 },
+  Bantu: { split: 5000 },
+  'Nilo-Saharan': { split: 15000 },
+  Nilotic: { split: 4000 },
+  Saharan: { split: 5000 },
+  Nubian: { split: 2500 },
+  'Old Nubian': { end: 500 },
+
+  // Isolates
+  Sumerian: { end: 4000 },
+  Elamite: { end: 2350 },
+  Etruscan: { end: 2000 },
+};
+
+/** Swadesh's retention rate for the 100-item core vocabulary list, per millennium. */
+export const RETENTION = 0.86;
+
+/** Estimated share of core vocabulary still cognate after two lineages evolve independently. */
+export const cognateShare = (yearsA: number, yearsB: number) => Math.pow(RETENTION, (yearsA + yearsB) / 1000);

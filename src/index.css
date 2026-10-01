@@ -1,0 +1,91 @@
+:root {
+  --bg: #0b0806;
+  --bg-2: #120d0a;
+  --bg-3: #1a1310;
+  --ink: #fbf1e4;
+  --ink-2: #d8c4ad;
+  --muted: #8e7764;
+  --line: rgba(255, 226, 190, 0.09);
+  --line-2: rgba(255, 226, 190, 0.18);
+  --gold: #f4cf7a;
+  --radius: 3px;
+  --display: 'Inter Tight', 'Inter', system-ui, sans-serif;
+  --sans: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --mono: 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+
+  color-scheme: dark;
+  font-family: var(--sans);
+  color: var(--ink);
+  background: var(--bg);
+  font-feature-settings: 'tnum' 1, 'cv11' 1;
+  text-rendering: geometricPrecision;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  margin: 0;
+  height: 100%;
+  overflow: hidden;
+  overscroll-behavior: none;
+}
+
+body {
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+button {
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+  border: 0;
+  background: none;
+}
+
+a {
+  color: inherit;
+}
+
+:focus-visible {
+  outline: 1px solid var(--gold);
+  outline-offset: 2px;
+}
+
+.desktop-only {
+  position: fixed;
+  inset: 0;
+  display: grid;
+  place-content: center;
+  gap: 14px;
+  padding: 24px;
+  text-align: center;
+  background: radial-gradient(120% 90% at 50% 60%, #24170f 0%, #0b0806 70%);
+}
+
+.desktop-only-name {
+  font-family: var(--display);
+  font-size: 44px;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+}
+
+.desktop-only-name em {
+  font-style: normal;
+  color: var(--gold);
+}
+
+.desktop-only p {
+  margin: 0;
+  color: var(--ink-2);
+  font-size: 17px;
+}

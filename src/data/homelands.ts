@@ -1,0 +1,47 @@
+/** Proposed homelands (urheimat) for proto-languages, by node name. Mainstream hypotheses; many are debated. */
+export interface Homeland {
+  at: [lon: number, lat: number];
+  label: string;
+}
+
+export const homelands: Record<string, Homeland> = {
+  'Indo-European': { at: [40, 48], label: 'Pontic–Caspian steppe (Kurgan hypothesis)' },
+  Germanic: { at: [10, 55.5], label: 'Southern Scandinavia & northern Germany' },
+  Italic: { at: [12.5, 43.5], label: 'Italian Peninsula' },
+  Latin: { at: [12.5, 41.9], label: 'Latium, around Rome' },
+  Romance: { at: [12.5, 41.9], label: 'Spoken Latin of the Roman Empire' },
+  Celtic: { at: [9, 48], label: 'Central Europe (Hallstatt) — debated' },
+  'Balto-Slavic': { at: [28, 54], label: 'Eastern Europe' },
+  Slavic: { at: [27, 51.5], label: 'Between the Vistula and Dnieper' },
+  'Indo-Iranian': { at: [60, 52], label: 'Southern Urals (Sintashta culture)' },
+  'Indo-Aryan': { at: [70, 33], label: 'Northwest of the Indian subcontinent' },
+  Iranian: { at: [62, 40], label: 'Central Asia' },
+  Hellenic: { at: [22, 39], label: 'Southern Balkans' },
+  Anatolian: { at: [33, 39], label: 'Anatolia' },
+  Tocharian: { at: [84, 41.5], label: 'Tarim Basin' },
+  Afroasiatic: { at: [37, 14], label: 'Northeast Africa — debated (Levant also proposed)' },
+  Semitic: { at: [36, 33], label: 'The Levant' },
+  Uralic: { at: [55, 57], label: 'Volga–Kama region & Urals — debated' },
+  Turkic: { at: [100, 48], label: 'Mongolia & southern Siberia' },
+  Mongolic: { at: [112, 47], label: 'Eastern Mongolian steppe' },
+  Tungusic: { at: [130, 48], label: 'Amur River basin' },
+  'Sino-Tibetan': { at: [106, 35], label: 'Upper Yellow River' },
+  Sinitic: { at: [113, 34.5], label: 'Central Plain of China' },
+  'Hmong–Mien': { at: [111, 27], label: 'Southern China' },
+  'Kra–Dai': { at: [110, 23], label: 'Southern China' },
+  Austroasiatic: { at: [104, 24], label: 'Mekong/Yunnan region — debated' },
+  Dravidian: { at: [76, 20], label: 'Peninsular India — debated' },
+  Austronesian: { at: [121, 23.7], label: 'Taiwan' },
+  Oceanic: { at: [150, -4], label: 'Bismarck Archipelago' },
+  Polynesian: { at: [-174, -17], label: 'Tonga & Samoa' },
+  'Pama–Nyungan': { at: [139, -18], label: 'Gulf of Carpentaria' },
+  'Eskimo–Aleut': { at: [-163, 61], label: 'Bering Strait region' },
+  'Na-Dene': { at: [-140, 63], label: 'Alaska & Yukon' },
+  Algic: { at: [-120, 46], label: 'Columbia Plateau' },
+  'Uto-Aztecan': { at: [-110, 33], label: 'American Southwest — debated' },
+  Mayan: { at: [-91.5, 15.5], label: 'Cuchumatanes highlands, Guatemala' },
+  Tupian: { at: [-62, -10.5], label: 'Rondônia, southwestern Amazon' },
+  Quechuan: { at: [-77, -11], label: 'Central Peruvian coast & highlands' },
+  Bantu: { at: [10, 6], label: 'Nigeria–Cameroon borderlands' },
+  'Niger–Congo': { at: [0, 10], label: 'West Africa — debated' },
+};
