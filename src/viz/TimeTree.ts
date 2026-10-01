@@ -283,6 +283,7 @@ export class TimeTree {
     const target = this.find(uid);
     if (!target) return;
     this.setAttract(false);
+    if (target !== this.selected) this.closeOthers(target);
     const opened = this.reveal(target);
     if (target._children) this.open(target);
     this.setSelected(target);
@@ -583,6 +584,17 @@ export class TimeTree {
     return opened;
   }
 
+  /** Close every family that isn't on the way to `target` or inside it (except in Above, which shows all). */
+  private closeOthers(target: LangNode) {
+    if (this.viewMode === 'above') return;
+    const path = new Set(target.ancestors() as LangNode[]);
+    for (const n of [...this.allNodes].reverse()) {
+      if (n.depth === 0 || !n.children || path.has(n)) continue;
+      if ((n.ancestors() as LangNode[]).includes(target)) continue;
+      this.collapse(n);
+    }
+  }
+
   private collapseBelow(depth: number) {
     for (const d of this.allNodes) {
       if (d.depth >= depth && d.children) this.collapse(d);
@@ -761,6 +773,7 @@ export class TimeTree {
       return;
     }
     if (this.selected !== d) {
+      this.closeOthers(d);
       this.setSelected(d);
       this.open(d);
     } else if (d.depth > 0) {
