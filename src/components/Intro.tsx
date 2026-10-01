@@ -13,7 +13,7 @@ export function Intro({ languages, families, onStart }: Props) {
         </h1>
         <p className="intro-sub">The family tree of human language</p>
         <p className="intro-stats">
-          {languages} languages, {families} families, and twenty thousand years of change
+          {languages} languages, {families} families, and thousands of years of change
         </p>
         <div className="intro-cta">
           Touch anywhere to begin

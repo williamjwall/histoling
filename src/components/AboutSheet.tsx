@@ -25,9 +25,8 @@ export function AboutSheet({ languages, families, onClose }: Props) {
           Histo<em>Ling</em>
         </h2>
         <p className="lede">
-          The family tree of human language: {languages} languages in {families} families, grown upward through{' '}
-          {ROOT_AGE.toLocaleString('en-US')} years of change, from a single origin at the bottom to the languages spoken
-          today at the top.
+          A family tree of human language: {languages} languages in {families} families, growing upward through
+          time to the languages spoken today. Families that can't be traced any further back meet at the bottom.
         </p>
 
         <section>
@@ -80,12 +79,45 @@ export function AboutSheet({ languages, families, onClose }: Props) {
         <section>
           <h3>How the dates and estimates work</h3>
           <p>
-            Split dates are rounded scholarly estimates; those filled in between known dates are marked <i>est.</i>{' '}
-            Shared vocabulary comes from glottochronology, which treats basic words (<i>water</i>, <i>two</i>,{' '}
-            <i>mother</i>…) a little like DNA: they are replaced at a roughly steady rate, about{' '}
-            {Math.round((1 - RETENTION) * 100)}% every thousand years. The method is debated and only gives a rough
-            guide, especially for deep time.
+            The families and their branches follow the comparative method, the standard way linguists show that
+            languages are related. Split dates are rounded scholarly estimates; those filled in between known dates
+            are marked <i>est.</i> The shared-vocabulary figure comes from glottochronology, which assumes basic
+            words (<i>water</i>, <i>two</i>, <i>mother</i>…) are replaced at a steady rate, about{' '}
+            {Math.round((1 - RETENTION) * 100)}% every thousand years.
           </p>
+        </section>
+
+        <section>
+          <h3>Limits and caveats</h3>
+          <ul>
+            <li>
+              <b>The Origin is not a known ancestor.</b> Whether all languages share one ancestor is unknown. The
+              bottom of the tree simply marks where reconstruction runs out, and its{' '}
+              {ROOT_AGE.toLocaleString('en-US')}-year depth is a display choice.
+            </li>
+            <li>
+              <b>Dates are estimates.</b> Many are debated, some by thousands of years, and uncertainty grows with
+              age. The dashed rings mark time older than 10,000 years, where dates are far less certain.
+            </li>
+            <li>
+              <b>Shared vocabulary is a rough illustration, not a measurement.</b> It is calculated from the dates,
+              not counted from real word lists. Glottochronology is largely rejected by linguists because rates of
+              change vary between languages; modern studies use Bayesian methods that allow for this.
+            </li>
+            <li>
+              <b>Spacing is approximate.</b> No flat layout can show every distance exactly, so close relatives are
+              placed most faithfully. Distance reflects time since a split, not similarity: shared vocabulary falls
+              quickly at first, then levels off.
+            </li>
+            <li>
+              <b>Languages also mix.</b> Borrowing, contact and creoles don't fit a simple tree, so creoles and
+              isolates are shown as separate groups.
+            </li>
+            <li>
+              <b>This is a selection.</b> It shows {languages} of the world's roughly 7,000 languages, chosen to
+              represent each family.
+            </li>
+          </ul>
         </section>
 
         <section>
