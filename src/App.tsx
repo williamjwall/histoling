@@ -27,10 +27,18 @@ export default function App() {
   const last = useRef<LangNode | null>(null);
 
   const onSelect = useCallback((n: LangNode | null) => {
-    if (n && last.current && n !== last.current) setPrevious(last.current);
+    if (n && last.current && n.uid !== last.current.uid) setPrevious(last.current);
     if (n) last.current = n;
     setSelected(n);
     setVersion((v) => v + 1);
+  }, []);
+
+  /** A rebuilt chart has fresh node objects: point remembered languages at them. */
+  const onReady = useCallback((c: TimeTree | null) => {
+    setChart(c);
+    if (!c) return;
+    last.current = last.current && (c.find(last.current.uid) ?? null);
+    setPrevious((p) => p && (c.find(p.uid) ?? null));
   }, []);
 
   const reset = useCallback(() => {
@@ -81,7 +89,7 @@ export default function App() {
   return (
     <div className={`app ${selected ? 'panel-open' : ''} ${intro ? 'is-intro' : ''}`}>
       <div className="backdrop" aria-hidden />
-      <TreeView onReady={setChart} onSelect={onSelect} onCompare={setCompare} onPicking={setPicking} onTurning={setTurning} />
+      <TreeView onReady={onReady} onSelect={onSelect} onCompare={setCompare} onPicking={setPicking} onTurning={setTurning} />
 
       <header className="topbar">
         <div className="brand">

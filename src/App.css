@@ -1826,3 +1826,8 @@
   margin: 0 4px;
   background: var(--line-2);
 }
+
+.stage.gl-lost .cone-overlay,
+.stage.gl-lost .cone-canvas {
+  display: none;
+}

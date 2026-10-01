@@ -50,6 +50,8 @@ interface Options {
   onCompare: (node: LangNode | null) => void;
   onPicking: (picking: boolean) => void;
   onTurning?: (turning: boolean) => void;
+  /** The chart can no longer draw (lost GPU context, repeated frame errors) and must be recreated. */
+  onFatal?: () => void;
 }
 
 /** Height of the time axis in world units; 20,000 years ago at y = 0, today at y = H. */
@@ -128,6 +130,9 @@ export class TimeTree {
   private compare: LangNode | null = null;
   private picking = false;
   private viewMode: View = 'side';
+  private lostTimer = 0;
+  private frameErrors = 0;
+  private dead = false;
   private path = new Set<LangNode>();
   private cmpPath = new Set<LangNode>();
   private mrca: LangNode | null = null;
@@ -170,6 +175,8 @@ export class TimeTree {
     this.renderer.setClearColor(0x000000, 0);
     this.renderer.domElement.className = 'cone-canvas';
     el.appendChild(this.renderer.domElement);
+    this.renderer.domElement.addEventListener('webglcontextlost', this.onContextLost);
+    this.renderer.domElement.addEventListener('webglcontextrestored', this.onContextRestored);
 
     this.overlay = document.createElement('div');
     this.overlay.className = 'cone-overlay';
@@ -398,7 +405,11 @@ export class TimeTree {
   }
 
   destroy() {
+    this.dead = true;
     cancelAnimationFrame(this.raf);
+    window.clearTimeout(this.lostTimer);
+    this.renderer.domElement.removeEventListener('webglcontextlost', this.onContextLost);
+    this.renderer.domElement.removeEventListener('webglcontextrestored', this.onContextRestored);
     this.resizeObserver.disconnect();
     this.el.removeEventListener('pointerdown', this.onPointerDown);
     this.el.removeEventListener('pointerup', this.onPointerUp);
@@ -410,6 +421,7 @@ export class TimeTree {
       (m.material as THREE.Material | undefined)?.dispose?.();
     });
     this.renderer.dispose();
+    if (!this.renderer.getContext().isContextLost()) this.renderer.forceContextLoss();
     this.renderer.domElement.remove();
     this.overlay.remove();
   }
@@ -1155,8 +1167,43 @@ export class TimeTree {
     }
   }
 
+  /** Without a GPU context only the HTML dots would remain, so hide everything until it is back. */
+  private onContextLost = (e: Event) => {
+    e.preventDefault();
+    this.el.classList.add('gl-lost');
+    window.clearTimeout(this.lostTimer);
+    this.lostTimer = window.setTimeout(() => this.fail(), 2500);
+  };
+
+  private onContextRestored = () => {
+    window.clearTimeout(this.lostTimer);
+    this.el.classList.remove('gl-lost');
+    this.geomDirty = true;
+    this.overlayDirty = true;
+  };
+
+  private fail() {
+    if (this.dead) return;
+    this.dead = true;
+    this.el.classList.add('gl-lost');
+    this.opts.onFatal?.();
+  }
+
   private loop = (now: number) => {
+    if (this.dead) return;
     this.raf = requestAnimationFrame(this.loop);
+    if (this.el.classList.contains('gl-lost')) return;
+    try {
+      this.drawFrame(now);
+      this.frameErrors = 0;
+    } catch (err) {
+      console.error(err);
+      this.geomDirty = true;
+      if (++this.frameErrors > 5) this.fail();
+    }
+  };
+
+  private drawFrame(now: number) {
     this.step(now);
     const camMoved = this.stepCamera(now);
     const shifted = this.applyViewShift();
@@ -1169,5 +1216,5 @@ export class TimeTree {
     }
     this.geomDirty = false;
     this.overlayDirty = false;
-  };
+  }
 }

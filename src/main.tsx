@@ -4,9 +4,16 @@ import './index.css'
 import App from './App.tsx'
 import { DesktopOnly } from './components/DesktopOnly.tsx'
 import { isMobileDevice } from './lib/device.ts'
+import { ErrorBoundary } from './components/ErrorBoundary.tsx'
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    {isMobileDevice() ? <DesktopOnly /> : <App />}
+    {isMobileDevice() ? (
+      <DesktopOnly />
+    ) : (
+      <ErrorBoundary>
+        <App />
+      </ErrorBoundary>
+    )}
   </StrictMode>,
 )
