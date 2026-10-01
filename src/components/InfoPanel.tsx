@@ -3,15 +3,14 @@ import { fetchFacts, fetchSummary, type WikidataFacts, type WikiSummary } from '
 import { cssVar, displayName, formatCount, formatMillions } from '../lib/format';
 import { nodePath, useBasemap } from '../lib/geo';
 import { MiniMap } from './MiniMap';
-import { LexicoSection } from './LexicoSection';
+import { ROOT_AGE } from '../data/chronology';
+import { formatYears } from '../lib/lineage';
 import type { LangNode, TimeTree } from '../viz/TimeTree';
 
 interface Props {
   node: LangNode;
   chart: TimeTree;
-  compare: LangNode | null;
-  picking: boolean;
-  previous: LangNode | null;
+  onCompare: () => void;
   onClose: () => void;
 }
 
@@ -41,7 +40,7 @@ function useWiki(node: LangNode) {
   return state;
 }
 
-export function InfoPanel({ node, chart, compare, picking, previous, onClose }: Props) {
+export function InfoPanel({ node, chart, onCompare, onClose }: Props) {
   const wiki = useWiki(node);
   const d = node.data;
   const kids = node.children ?? node._children ?? [];
@@ -96,6 +95,22 @@ export function InfoPanel({ node, chart, compare, picking, previous, onClose }: 
             <dd>≈ {formatMillions(node.total)}</dd>
           </div>
         )}
+        {node.depth > 0 && isFamily && node.age < ROOT_AGE * 0.98 && (
+          <div className="wide">
+            <dt>Began to split</dt>
+            <dd>
+              About {formatYears(node.age)} ago{node.ageEstimated && <span className="est">est.</span>}
+            </dd>
+          </div>
+        )}
+        {d.extinct && !isFamily && (
+          <div className="wide">
+            <dt>Last spoken natively</dt>
+            <dd>
+              About {formatYears(node.age)} ago{node.ageEstimated && <span className="est">est.</span>}
+            </dd>
+          </div>
+        )}
         {d.era && (
           <div className="wide">
             <dt>{d.extinct ? 'Attested' : 'Origin'}</dt>
@@ -135,7 +150,11 @@ export function InfoPanel({ node, chart, compare, picking, previous, onClose }: 
         )}
       </dl>
 
-      {node.depth > 0 && <LexicoSection node={node} compare={compare} picking={picking} chart={chart} previous={previous} />}
+      {node.depth > 0 && (
+        <button className="panel-compare" onClick={onCompare}>
+          Compare {d.name} with another language
+        </button>
+      )}
 
       {d.note && <p className="note">{d.note}</p>}
 

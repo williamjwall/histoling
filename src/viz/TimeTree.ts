@@ -123,6 +123,7 @@ export class TimeTree {
   private geomDirty = true;
   private overlayDirty = true;
   private viewShift = 0;
+  private leftInset = 0;
   private viewDirty = true;
 
   private selected: LangNode | null = null;
@@ -349,6 +350,14 @@ export class TimeTree {
     const target = new THREE.Vector3(0, H * 0.5, 0);
     const dir = this.viewDir(theta, 0.34);
     this.flyTo(target, dir, this.distanceFor(Math.hypot(this.extent, H / 2) * 0.92), duration);
+  }
+
+  /** Screen width covered on the left (e.g. by the compare window), kept clear when framing. */
+  setLeftInset(px: number) {
+    if (px === this.leftInset) return;
+    this.leftInset = px;
+    this.viewDirty = true;
+    if (this.selected && this.compare) this.frameCompare();
   }
 
   /** Halt turning and any camera flight in progress. */
@@ -765,7 +774,7 @@ export class TimeTree {
   }
 
   private availWidth() {
-    return Math.max(240, this.width - (this.selected && this.width > 900 ? PANEL_W : 0));
+    return Math.max(240, this.width - (this.selected && this.width > 900 ? PANEL_W : 0) - this.leftInset);
   }
 
   /** Camera distance at which a sphere of the given radius fills the free part of the screen. */
@@ -851,7 +860,7 @@ export class TimeTree {
 
   /** Shift the projection so the scene centres in the space left of the info panel and below the top bar. */
   private applyViewShift() {
-    const goal = this.selected && this.width > 900 ? PANEL_W / 2 : 0;
+    const goal = ((this.selected && this.width > 900 ? PANEL_W : 0) - this.leftInset) / 2;
     if (Math.abs(goal - this.viewShift) < 0.5) {
       if (this.viewShift === goal && !this.viewDirty) return false;
       this.viewShift = goal;

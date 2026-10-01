@@ -10,9 +10,12 @@ interface Props {
   className?: string;
   /** Leave this node out of the results (e.g. the language being compared). */
   exclude?: LangNode | null;
+  autoFocus?: boolean;
+  /** Called when the box loses focus without a choice. */
+  onCancel?: () => void;
 }
 
-export function SearchBox({ chart, onChoose, placeholder = 'Find a language…', className = '', exclude }: Props) {
+export function SearchBox({ chart, onChoose, placeholder = 'Find a language…', className = '', exclude, autoFocus, onCancel }: Props) {
   const [query, setQuery] = useState('');
   const [active, setActive] = useState(0);
   const [open, setOpen] = useState(false);
@@ -67,7 +70,13 @@ export function SearchBox({ chart, onChoose, placeholder = 'Find a language…',
           setOpen(true);
         }}
         onFocus={() => setOpen(true)}
-        onBlur={() => setTimeout(() => setOpen(false), 150)}
+        autoFocus={autoFocus}
+        onBlur={() =>
+          setTimeout(() => {
+            setOpen(false);
+            onCancel?.();
+          }, 150)
+        }
         onKeyDown={(e) => {
           if (e.key === 'ArrowDown') {
             e.preventDefault();

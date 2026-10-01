@@ -6,6 +6,7 @@ import { Controls } from './components/Controls';
 import { Intro } from './components/Intro';
 import { Legend } from './components/Legend';
 import { InfoSheet } from './components/InfoSheet';
+import { CompareWindow } from './components/CompareWindow';
 import type { LangNode, TimeTree, View } from './viz/TimeTree';
 import { loadBasemap } from './lib/geo';
 import './App.css';
@@ -20,6 +21,7 @@ export default function App() {
   const [compare, setCompare] = useState<LangNode | null>(null);
   const [picking, setPicking] = useState(false);
   const [info, setInfo] = useState(false);
+  const [comparing, setComparing] = useState(false);
   const [turning, setTurning] = useState(false);
   const [view, setView] = useState<View>('side');
 
@@ -44,7 +46,19 @@ export default function App() {
   const reset = useCallback(() => {
     chart?.reset();
     setView('side');
+    setComparing(false);
   }, [chart]);
+
+  const onCompare = useCallback((n: LangNode | null) => {
+    setCompare(n);
+    if (n) setComparing(true);
+  }, []);
+
+  const closeCompare = () => {
+    setComparing(false);
+    chart?.setPicking(false);
+    chart?.setCompare(null);
+  };
 
   const changeView = (v: View) => {
     setView(v);
@@ -54,6 +68,10 @@ export default function App() {
   useEffect(() => {
     chart?.setAttract(intro);
   }, [chart, intro]);
+
+  useEffect(() => {
+    chart?.setLeftInset(comparing && window.innerWidth > 1100 ? 568 : 0);
+  }, [chart, comparing]);
 
   useEffect(() => {
     const id = window.setTimeout(loadBasemap, 1500);
@@ -89,7 +107,7 @@ export default function App() {
   return (
     <div className={`app ${selected ? 'panel-open' : ''} ${intro ? 'is-intro' : ''}`}>
       <div className="backdrop" aria-hidden />
-      <TreeView onReady={onReady} onSelect={onSelect} onCompare={setCompare} onPicking={setPicking} onTurning={setTurning} />
+      <TreeView onReady={onReady} onSelect={onSelect} onCompare={onCompare} onPicking={setPicking} onTurning={setTurning} />
 
       <header className="topbar">
         <div className="brand">
@@ -109,18 +127,15 @@ export default function App() {
               Above
             </button>
           </div>
+          <button className={comparing ? 'on' : ''} onClick={() => (comparing ? closeCompare() : setComparing(true))}>
+            Compare
+          </button>
           <button className={info ? 'on' : ''} onClick={() => setInfo(!info)}>
             Info
           </button>
         </nav>
         {chart && (
-          <SearchBox
-            chart={chart}
-            className={picking ? 'comparing' : ''}
-            placeholder={picking && selected ? `Compare ${selected.data.name} with…` : undefined}
-            exclude={picking ? selected : null}
-            onChoose={picking ? (n) => chart.setCompare(n.uid) : undefined}
-          />
+          <SearchBox chart={chart} />
         )}
       </header>
 
@@ -131,12 +146,17 @@ export default function App() {
       <Legend />
 
       {chart && selected && (
-        <InfoPanel key={selected.uid} node={selected}
+        <InfoPanel
+          key={selected.uid}
+          node={selected}
           chart={chart}
-          compare={compare}
-          picking={picking}
-          previous={previous}
-          onClose={() => chart.deselect()} />
+          onCompare={() => setComparing(true)}
+          onClose={() => chart.deselect()}
+        />
+      )}
+
+      {chart && comparing && (
+        <CompareWindow chart={chart} a={selected} b={compare} picking={picking} previous={previous} onClose={closeCompare} />
       )}
 
       {info && <InfoSheet {...stats} onClose={() => setInfo(false)} />}
