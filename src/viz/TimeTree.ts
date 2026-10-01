@@ -78,7 +78,6 @@ const yOf = (age: number) => H * (1 - Math.min(age, ROOT_AGE) / ROOT_AGE);
 
 function ringLabel(age: number) {
   if (age === 0) return 'Today';
-  if (age === HORIZON) return '10,000 years ago (limit of the method)';
   return `${d3.format(',')(age)} years ago`;
 }
 
@@ -891,7 +890,7 @@ export class TimeTree {
       this.scene.add(ring);
       if (RING_LABELS.has(age)) {
         const el = document.createElement('div');
-        el.className = `ring-label${age === 0 ? ' today' : ''}${age === HORIZON ? ' horizon' : ''}`;
+        el.className = `ring-label${age === 0 ? ' today' : ''}`;
         el.textContent = ringLabel(age);
         this.overlay.appendChild(el);
         this.ringLabels.push({ age, el });
