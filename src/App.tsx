@@ -5,7 +5,7 @@ import { SearchBox } from './components/SearchBox';
 import { Controls } from './components/Controls';
 import { Intro } from './components/Intro';
 import { Legend } from './components/Legend';
-import { InfoSheet } from './components/InfoSheet';
+import { AboutSheet } from './components/AboutSheet';
 import { CompareWindow } from './components/CompareWindow';
 import type { LangNode, TimeTree, View } from './viz/TimeTree';
 import { loadBasemap } from './lib/geo';
@@ -20,7 +20,7 @@ export default function App() {
   const [intro, setIntro] = useState(true);
   const [compare, setCompare] = useState<LangNode | null>(null);
   const [picking, setPicking] = useState(false);
-  const [info, setInfo] = useState(false);
+  const [about, setAbout] = useState(false);
   const [comparing, setComparing] = useState(false);
   const [turning, setTurning] = useState(false);
   const [view, setView] = useState<View>('side');
@@ -130,8 +130,8 @@ export default function App() {
           <button className={comparing ? 'on' : ''} onClick={() => (comparing ? closeCompare() : setComparing(true))}>
             Compare
           </button>
-          <button className={info ? 'on' : ''} onClick={() => setInfo(!info)}>
-            Info
+          <button className={about ? 'on' : ''} onClick={() => setAbout(!about)}>
+            About
           </button>
         </nav>
         {chart && (
@@ -159,7 +159,7 @@ export default function App() {
         <CompareWindow chart={chart} a={selected} b={compare} picking={picking} previous={previous} onClose={closeCompare} />
       )}
 
-      {info && <InfoSheet {...stats} onClose={() => setInfo(false)} />}
+      {about && <AboutSheet {...stats} onClose={() => setAbout(false)} />}
 
       {intro && <Intro {...stats} onStart={() => setIntro(false)} />}
     </div>
