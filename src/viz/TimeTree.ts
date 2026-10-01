@@ -130,6 +130,8 @@ export class TimeTree {
   private compare: LangNode | null = null;
   private picking = false;
   private viewMode: View = 'side';
+  /** Families that were open before Above opened everything, restored on returning to Side. */
+  private openBeforeAbove: Set<LangNode> | null = null;
   private lostTimer = 0;
   private frameErrors = 0;
   private dead = false;
@@ -241,13 +243,24 @@ export class TimeTree {
 
   /** Side view of the whole tree, or looking down on the present with every living language open. */
   setView(view: View) {
+    if (view === this.viewMode) return this.fit();
     this.viewMode = view;
     if (view === 'above') {
+      this.openBeforeAbove = new Set(this.allNodes.filter((n) => n.children));
       const open = (n: LangNode) => {
         if (n._children) this.expand(n);
         n.children?.forEach((c) => open(c as LangNode));
       };
       open(this.root);
+      this.update(this.root);
+    } else if (this.openBeforeAbove) {
+      // Close what Above opened, but keep the way to anything chosen meanwhile.
+      const keep = new Set<LangNode>();
+      for (const n of [this.selected, this.compare]) if (n) for (const a of n.ancestors() as LangNode[]) keep.add(a);
+      for (const n of [...this.allNodes].reverse()) {
+        if (n.children && !this.openBeforeAbove.has(n) && !keep.has(n)) this.collapse(n);
+      }
+      this.openBeforeAbove = null;
       this.update(this.root);
     }
     this.fit();
@@ -335,6 +348,7 @@ export class TimeTree {
   reset() {
     this.setAttract(false);
     this.viewMode = 'side';
+    this.openBeforeAbove = null;
     this.setSelected(null);
     this.collapseBelow(1);
     this.update(this.root);
